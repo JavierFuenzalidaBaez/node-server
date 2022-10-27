@@ -1,0 +1,13 @@
+command open bash container
+docker exec -it <mycontainer> bash
+
+command removes the stopped containers and dangling images
+docker rm -f $(docker ps -qa)
+
+remove all the containers:
+docker rmi -f $(docker images -aq)
+
+
+watch status all containers (memory etc...)
+docker stats --all
+

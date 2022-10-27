@@ -1,0 +1,40 @@
+version: "3"
+services:
+  nginx:
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./custom_proxy_settings.conf:/etc/nginx/conf.d/custom_proxy_settings.conf
+    depends_on:
+      - app-backend
+  app-backend:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: app-backend
+    env_file:
+      - .env
+    volumes:
+      - .:/app/api
+      - /app/api/node_modules
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: 1000M
+    restart: always
+  redis:
+    image: redis
+    container_name: redis
+    restart: on-failure
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command: --port 6380
+    ports:
+      - "6380:6380"
+    expose:
+      - "6380"
